@@ -1,0 +1,25 @@
+# --- Python / Django Backend ---
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.db
+*.pyo
+*.pyd
+*.pyc
+*.env
+.venv/
+venv/
+ENV/
+env/
+media/
+
+# Pytest
+.cache/
+.pytest_cache/
+
+# Migrations (optional)
+**/migrations/*.pyc
+**/migrations
+**/migrations/__pycache__/
+*.log
+
