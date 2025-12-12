@@ -1,7 +1,5 @@
 # Applicant Tracking System — Take-home Assignment
 
-**Owner:** Sarujanan
-
 **Goal:** Create and deploy a minimal, usable Applicant Tracking System (ATS) for a recruiter who needs to sort and review hundreds of applications quickly.
 
 ---
@@ -12,11 +10,11 @@
 
 * **Backend:** Django + Django REST Framework (Python)
 * **Frontend:** React (TypeScript) — can deploy on Vercel
-* **Database:** MySQL (or SQLite for local/dev; MySQL for production)
+* **Database:** Postgre Sql
 * **File storage:** Local for dev; use S3-compatible or platform storage for production
-* **Deployment:** Render / Railway / Heroku for backend; Vercel for frontend
+* **Deployment:** Railway for backend; Vercel for frontend
 
-**Why:** You already have Django experience (migration from PHP to Django), Django REST makes APIs quick; React+TypeScript gives a pleasant UI and is standard for take-home tasks.
+**Why:** You already have Django experience , Django REST makes APIs quick; React+TypeScript gives a pleasant UI and is standard for take-home tasks.
 
 ---
 
@@ -63,7 +61,6 @@ class Applicant(models.Model):
     cover_letter = models.TextField(blank=True)
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
-    score = models.FloatField(default=0)  # optional simple ranking score
     created_at = models.DateTimeField(auto_now_add=True)
 
 STATUS_CHOICES = [
@@ -99,7 +96,6 @@ STATUS_CHOICES = [
 * Jobs list + create job modal
 * Applications list with filters, search, bulk select checkbox
 * Application detail panel (right side) showing resume preview and status buttons
-* Simple ranking UI: show `score` and highlight top 5
 
 ---
 
@@ -132,8 +128,8 @@ Assumptions:
 2. Start project and app:
 
    ```bash
-   django-admin startproject ats_project
-   cd ats_project
+   django-admin startproject backend
+   cd backend
    python manage.py startapp ats
    ```
 3. Add `rest_framework` and `corsheaders` to `INSTALLED_APPS`, setup media settings for `resumes/`.
@@ -154,8 +150,8 @@ Assumptions:
 1. Create app (use Vite):
 
    ```bash
-   npm create vite@latest ats-frontend -- --template react-ts
-   cd ats-frontend
+   npm create vite@latest frontend -- --template react-ts
+   cd frontend
    npm install
    npm run dev
    ```
@@ -226,31 +222,3 @@ If you only have 1 day, deliver backend APIs + README + a very simple frontend p
 3. Short note listing what features you implemented and what you would add with more time.
 4. (Optional) Short video or GIF walkthrough highlighting upload, filter, shortlist — helps recruiters.
 
----
-
-## 14) Quick starter code snippets (Django serializers example)
-
-```python
-from rest_framework import serializers
-from .models import Applicant, Job
-
-class JobSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Job
-        fields = '__all__'
-
-class ApplicantSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Applicant
-        fields = ['id','name','email','phone','resume','cover_letter','job','status','created_at','score']
-```
-
----
-
-## Final notes (how I can help next)
-
-* I can generate the full Django project scaffold (models, serializers, views, urls) now if you want — say "generate backend".
-* I can also create the React TypeScript frontend scaffold and a simple UI that consumes the API — say "generate frontend".
-* I can produce both and a deployment guide; tell me which you want first and I will generate code and commands you can run.
-
-Good luck — you can start by copying this README into your repo and then building the backend models. If you'd like, tell me: **generate backend** or **generate frontend**, and I will create the starter code for you.
