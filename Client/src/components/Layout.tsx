@@ -14,7 +14,6 @@ import {
   Sun,
   Moon,
   User,
-  FileText,
   Settings,
   Bell,
   HelpCircle,

@@ -7,8 +7,6 @@ import {
   Briefcase,
   Home,
   LogIn,
-  UserPlus,
-  Users,
   Building,
   Phone,
   Mail,
@@ -16,8 +14,7 @@ import {
   Linkedin,
   Twitter,
   Facebook,
-  Instagram,
-  ArrowUpRight,
+  Instagram
 } from "lucide-react";
 
 interface PublicLayoutProps {
