@@ -11,6 +11,7 @@ from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 import csv
 from datetime import datetime, timedelta
+import re
 
 from .models import Job, Applicant
 from .serializers import (
@@ -18,6 +19,7 @@ from .serializers import (
     ApplicantSerializer, ApplicantStatusUpdateSerializer,
     BulkStatusUpdateSerializer, DashboardStatsSerializer
 )
+from .email_service import send_application_confirmation_email, send_status_update_email
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
@@ -132,11 +134,28 @@ class ApplicantViewSet(viewsets.ModelViewSet):
         serializer = ApplicantStatusUpdateSerializer(data=request.data)
         
         if serializer.is_valid():
-            applicant.status = serializer.validated_data['status']
-            if 'notes' in serializer.validated_data:
-                applicant.notes = serializer.validated_data['notes']
+            old_status = applicant.status
+            new_status = serializer.validated_data['status']
+            notes = serializer.validated_data.get('notes', '')
+            
+            applicant.status = new_status
+            if notes:
+                applicant.notes = notes
             applicant.save()
-            return Response(ApplicantSerializer(applicant, context={'request': request}).data)
+            
+            # Send status update email to applicant
+            email_result = send_status_update_email(
+                applicant_name=applicant.name,
+                applicant_email=applicant.email,
+                job_title=applicant.job.title,
+                new_status=new_status,
+                notes=notes
+            )
+            
+            response_data = ApplicantSerializer(applicant, context={'request': request}).data
+            response_data['email_sent'] = email_result.get('success', False)
+            
+            return Response(response_data)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -215,8 +234,7 @@ class ApplicantViewSet(viewsets.ModelViewSet):
             'recent_applicants': ApplicantSerializer(recent_applicants, many=True, context={'request': request}).data
         }
         
-        serializer = DashboardStatsSerializer(data)
-        return Response(serializer.data)
+        return Response(data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -303,23 +321,24 @@ def public_application_create(request):
         # Create the application
         serializer = ApplicantSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            applicant_instance = serializer.save()
             
-            # Optional: Send confirmation email
-            try:
-                send_confirmation_email(
-                    email=email,
-                    name=request.data['name'],
-                    job_title=job.title
-                )
-            except Exception:
-                pass  # Don't fail if email sending fails
+            # Send confirmation email to applicant
+            email_result = send_application_confirmation_email(
+                applicant_data={
+                    'name': request.data['name'],
+                    'email': email,
+                },
+                job_title=job.title,
+                applicant_email=email
+            )
             
             return Response(
                 {
                     'success': True,
                     'message': 'Application submitted successfully!',
-                    'application_id': serializer.data['id']
+                    'application_id': serializer.data['id'],
+                    'email_sent': email_result.get('success', False)
                 },
                 status=status.HTTP_201_CREATED
             )
@@ -331,27 +350,3 @@ def public_application_create(request):
             {'error': str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-
-def send_confirmation_email(email, name, job_title):
-    """Send confirmation email to applicant"""
-    subject = f'Application Received - {job_title}'
-    message = f"""
-    Dear {name},
-    
-    Thank you for applying for the {job_title} position at Nanthi Ventures.
-    
-    We have received your application and will review it carefully. 
-    If your qualifications match our requirements, we will contact you 
-    for the next steps in the hiring process.
-    
-    Best regards,
-    Nanthi Ventures Recruitment Team
-    """
-    
-    # For production, use Django's email backend
-    # from django.core.mail import send_mail
-    # send_mail(subject, message, 'noreply@nanthiventures.com', [email])
-    
-    print(f"Email would be sent to: {email}")
-    print(f"Subject: {subject}")
-    print(f"Message: {message}")
