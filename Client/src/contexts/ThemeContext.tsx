@@ -1,6 +1,6 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect } from "react";
 
-type Theme = 'light' | 'dark';
+type Theme = "light" | "dark";
 
 interface ThemeContextType {
   theme: Theme;
@@ -12,24 +12,36 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    throw new Error("useTheme must be used within a ThemeProvider");
   }
   return context;
 };
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    return savedTheme || 'light';
+    const savedTheme = localStorage.getItem("theme") as Theme;
+    return savedTheme || "light";
   });
 
   useEffect(() => {
-    localStorage.setItem('theme', theme);
-    document.documentElement.setAttribute('data-theme', theme);
+    const root = document.documentElement;
+    // Persist preference
+    localStorage.setItem("theme", theme);
+    // Set attributes/classes Tailwind expects
+    root.setAttribute("data-theme", theme);
+    root.classList.remove("light", "dark");
+    root.classList.add(theme);
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
   return (

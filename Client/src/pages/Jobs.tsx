@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   Plus,
@@ -23,6 +24,7 @@ import {
 import type { Job } from "../types";
 
 const Jobs: React.FC = () => {
+  const navigate = useNavigate();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -137,11 +139,20 @@ const Jobs: React.FC = () => {
   const handleUpdateJob = async () => {
     if (!selectedJob) return;
 
+    // Validate form
+    const newErrors: Record<string, string> = {};
+    if (!newJob.title.trim()) newErrors.title = "Title is required";
+    if (!newJob.description.trim())
+      newErrors.description = "Description is required";
+    if (!newJob.location.trim()) newErrors.location = "Location is required";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     try {
-      const response = await axios.put(`/api/jobs/${selectedJob.id}/`, {
-        ...selectedJob,
-        ...newJob,
-      });
+      const response = await axios.put(`/api/jobs/${selectedJob.id}/`, newJob);
       setJobs(
         jobs.map((job) => (job.id === selectedJob.id ? response.data : job))
       );
@@ -519,6 +530,15 @@ const Jobs: React.FC = () => {
                               <button
                                 onClick={() => {
                                   setSelectedJob(job);
+                                  setNewJob({
+                                    title: job.title,
+                                    description: job.description,
+                                    requirements: job.requirements,
+                                    location: job.location,
+                                    salary_range: job.salary_range,
+                                    is_active: job.is_active,
+                                  });
+                                  setErrors({});
                                   setShowEditModal(true);
                                 }}
                                 className="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
@@ -532,13 +552,15 @@ const Jobs: React.FC = () => {
                               >
                                 {job.is_active ? "Deactivate" : "Activate"}
                               </button>
-                              <a
-                                href={`/applicants?job=${job.id}`}
+                              <button
+                                onClick={() =>
+                                  navigate(`/applicants?job=${job.id}`)
+                                }
                                 className="inline-flex items-center px-3 py-1.5 border border-transparent rounded-md text-sm font-medium text-white bg-green-600 hover:bg-green-700"
                               >
                                 <Eye className="mr-1.5 h-4 w-4" />
                                 View Applicants ({job.application_count || 0})
-                              </a>
+                              </button>
                             </div>
                             <button
                               onClick={() => {
@@ -632,7 +654,7 @@ const Jobs: React.FC = () => {
                         ? "border-red-300 dark:border-red-700"
                         : ""
                     }`}
-                    placeholder="e.g., San Francisco, CA or Remote"
+                    placeholder="e.g., Onsite(Jaffna or Killinochchi) or Remote"
                   />
                   {errors.location && (
                     <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -652,7 +674,7 @@ const Jobs: React.FC = () => {
                       setNewJob({ ...newJob, salary_range: e.target.value })
                     }
                     className="block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
-                    placeholder="e.g., $100,000 - $150,000"
+                    placeholder="e.g., Rs100,000 - Rs150,000"
                   />
                 </div>
 

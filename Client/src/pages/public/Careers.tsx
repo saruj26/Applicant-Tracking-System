@@ -199,7 +199,7 @@ const Careers: React.FC = () => {
         </div>
 
         {/* Job Listings */}
-        <div className="space-y-6">
+        <div>
           {filteredJobs.length === 0 ? (
             <div className="text-center py-12">
               <Briefcase className="h-16 w-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
@@ -214,68 +214,66 @@ const Careers: React.FC = () => {
             </div>
           ) : (
             <>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                 Open Positions ({filteredJobs.length})
               </h2>
-              {filteredJobs.map((job) => (
-                <div
-                  key={job.id}
-                  className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-shadow p-6"
-                >
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                          {job.title}
-                        </h3>
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          Active
-                        </span>
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-4 text-gray-600 dark:text-gray-400 mb-4">
-                        {job.location && (
-                          <div className="flex items-center">
-                            <MapPin className="h-4 w-4 mr-2" />
-                            {job.location}
-                          </div>
-                        )}
-                        {job.salary_range && (
-                          <div className="flex items-center">
-                            <DollarSign className="h-4 w-4 mr-2" />
-                            {job.salary_range}
-                          </div>
-                        )}
-                        <div className="flex items-center">
-                          <Calendar className="h-4 w-4 mr-2" />
-                          Posted {formatDate(job.created_at)}
-                        </div>
-                      </div>
-
-                      <p className="text-gray-700 dark:text-gray-300 line-clamp-2">
-                        {job.description.substring(0, 200)}...
-                      </p>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {filteredJobs.map((job) => (
+                  <div
+                    key={job.id}
+                    className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-6 flex flex-col"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white flex-1 pr-3">
+                        {job.title}
+                      </h3>
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 whitespace-nowrap">
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                        Active
+                      </span>
                     </div>
 
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
+                      {job.location && (
+                        <div className="flex items-center">
+                          <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
+                          <span>{job.location}</span>
+                        </div>
+                      )}
+                      {job.salary_range && (
+                        <div className="flex items-center">
+                          <DollarSign className="h-4 w-4 mr-2 flex-shrink-0" />
+                          <span>{job.salary_range}</span>
+                        </div>
+                      )}
+                      <div className="flex items-center">
+                        <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
+                        <span>Posted {formatDate(job.created_at)}</span>
+                      </div>
+                    </div>
+
+                    <p className="text-gray-700 dark:text-gray-300 text-sm mb-6 flex-1 line-clamp-3">
+                      {job.description.substring(0, 150)}...
+                    </p>
+
+                    <div className="flex gap-3 mt-auto">
                       <Link
                         to={`/careers/${job.id}`}
-                        className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors text-center"
+                        className="flex-1 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors text-center text-sm"
                       >
                         Apply Now
                       </Link>
                       <Link
                         to={`/careers/${job.id}`}
-                        className="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-center flex items-center justify-center"
+                        className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-center flex items-center justify-center text-sm"
                       >
-                        View Details
-                        <ExternalLink className="h-4 w-4 ml-2" />
+                        Details
+                        <ExternalLink className="h-4 w-4 ml-1" />
                       </Link>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </>
           )}
         </div>

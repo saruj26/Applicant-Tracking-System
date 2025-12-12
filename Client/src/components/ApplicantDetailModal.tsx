@@ -1,8 +1,19 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { X, Mail, Phone, Calendar, FileText, Briefcase, Award, Download, Edit } from 'lucide-react';
-import type { Applicant } from '../types';
-import StatusBadge from './StatusBadge';
+import React, { useState } from "react";
+import axios from "axios";
+import Swal from "sweetalert2";
+import {
+  X,
+  Mail,
+  Phone,
+  Calendar,
+  FileText,
+  Briefcase,
+  Award,
+  Download,
+  Edit,
+} from "lucide-react";
+import type { Applicant } from "../types";
+import StatusBadge from "./StatusBadge";
 
 interface ApplicantDetailModalProps {
   isOpen: boolean;
@@ -17,33 +28,77 @@ const ApplicantDetailModal: React.FC<ApplicantDetailModalProps> = ({
   applicant,
   onStatusUpdate,
 }) => {
-  const [notes, setNotes] = useState('');
+  const [notes, setNotes] = useState("");
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
   if (!isOpen || !applicant) return null;
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const handleStatusUpdate = async (status: string) => {
+    // Show SweetAlert confirmation
+    const result = await Swal.fire({
+      title: "Confirm Status Update",
+      html: `
+        <p>Change status for <strong>${
+          applicant.name
+        }</strong> to <strong>${status.toUpperCase()}</strong>?</p>
+        <p class="text-sm text-gray-500 mt-2">An email notification will be sent to the applicant.</p>
+      `,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3b82f6",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, update status",
+      cancelButtonText: "Cancel",
+      allowOutsideClick: false,
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       setIsUpdating(true);
-      await axios.post(`/api/applicants/${applicant.id}/update_status/`, { 
+      await axios.post(`/api/applicants/${applicant.id}/update_status/`, {
         status,
-        notes: notes || applicant.notes 
+        notes: notes || applicant.notes,
       });
+
+      // Show success message
+      await Swal.fire({
+        title: "Status Updated!",
+        html: `
+          <p>Status successfully updated to <strong>${status.toUpperCase()}</strong></p>
+          <p class="text-sm text-gray-600 mt-2">✓ Email notification sent to ${
+            applicant.email
+          }</p>
+        `,
+        icon: "success",
+        confirmButtonColor: "#3b82f6",
+        timer: 3500,
+        timerProgressBar: true,
+      });
+
       onStatusUpdate();
     } catch (err) {
-      console.error('Failed to update status:', err);
+      console.error("Failed to update status:", err);
+
+      // Show error message
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to update status. Please try again.",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      });
     } finally {
       setIsUpdating(false);
     }
@@ -56,24 +111,44 @@ const ApplicantDetailModal: React.FC<ApplicantDetailModalProps> = ({
       setIsEditingNotes(false);
       onStatusUpdate();
     } catch (err) {
-      console.error('Failed to save notes:', err);
+      console.error("Failed to save notes:", err);
     } finally {
       setIsUpdating(false);
     }
   };
 
   const statusOptions = [
-    { value: 'new', label: 'New', color: 'bg-blue-500 hover:bg-blue-600' },
-    { value: 'reviewed', label: 'Reviewed', color: 'bg-purple-500 hover:bg-purple-600' },
-    { value: 'shortlisted', label: 'Shortlisted', color: 'bg-green-500 hover:bg-green-600' },
-    { value: 'rejected', label: 'Rejected', color: 'bg-red-500 hover:bg-red-600' },
-    { value: 'hired', label: 'Hired', color: 'bg-emerald-500 hover:bg-emerald-600' },
+    { value: "new", label: "New", color: "bg-blue-500 hover:bg-blue-600" },
+    {
+      value: "reviewed",
+      label: "Reviewed",
+      color: "bg-purple-500 hover:bg-purple-600",
+    },
+    {
+      value: "shortlisted",
+      label: "Shortlisted",
+      color: "bg-green-500 hover:bg-green-600",
+    },
+    {
+      value: "rejected",
+      label: "Rejected",
+      color: "bg-red-500 hover:bg-red-600",
+    },
+    {
+      value: "hired",
+      label: "Hired",
+      color: "bg-emerald-500 hover:bg-emerald-600",
+    },
   ];
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div className="fixed inset-0 transition-opacity" aria-hidden="true" onClick={onClose}>
+        <div
+          className="fixed inset-0 transition-opacity"
+          aria-hidden="true"
+          onClick={onClose}
+        >
           <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
         </div>
 
@@ -106,12 +181,16 @@ const ApplicantDetailModal: React.FC<ApplicantDetailModalProps> = ({
                   <div className="space-y-3">
                     <div className="flex items-center">
                       <Mail className="h-5 w-5 text-gray-400 mr-3" />
-                      <span className="text-gray-700 dark:text-gray-300">{applicant.email}</span>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {applicant.email}
+                      </span>
                     </div>
                     {applicant.phone && (
                       <div className="flex items-center">
                         <Phone className="h-5 w-5 text-gray-400 mr-3" />
-                        <span className="text-gray-700 dark:text-gray-300">{applicant.phone}</span>
+                        <span className="text-gray-700 dark:text-gray-300">
+                          {applicant.phone}
+                        </span>
                       </div>
                     )}
                     <div className="flex items-center">
@@ -122,22 +201,28 @@ const ApplicantDetailModal: React.FC<ApplicantDetailModalProps> = ({
                     </div>
                     <div className="flex items-center">
                       <Briefcase className="h-5 w-5 text-gray-400 mr-3" />
-                      <span className="text-gray-700 dark:text-gray-300">Match Score: {applicant.match_score}%</span>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        Match Score: {applicant.match_score}%
+                      </span>
                     </div>
                     {applicant.keywords && (
                       <div className="flex items-start">
                         <Award className="h-5 w-5 text-gray-400 mr-3 mt-0.5" />
                         <div>
-                          <span className="text-gray-700 dark:text-gray-300">Keywords: </span>
+                          <span className="text-gray-700 dark:text-gray-300">
+                            Keywords:{" "}
+                          </span>
                           <div className="flex flex-wrap gap-1 mt-1">
-                            {applicant.keywords.split(',').map((keyword, index) => (
-                              <span
-                                key={index}
-                                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
-                              >
-                                {keyword.trim()}
-                              </span>
-                            ))}
+                            {applicant.keywords
+                              .split(",")
+                              .map((keyword, index) => (
+                                <span
+                                  key={index}
+                                  className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
+                                >
+                                  {keyword.trim()}
+                                </span>
+                              ))}
                           </div>
                         </div>
                       </div>
@@ -151,14 +236,16 @@ const ApplicantDetailModal: React.FC<ApplicantDetailModalProps> = ({
                   </h4>
                   <div className="prose prose-sm max-w-none dark:prose-invert">
                     <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                      {applicant.cover_letter || 'No cover letter provided.'}
+                      {applicant.cover_letter || "No cover letter provided."}
                     </p>
                   </div>
                 </div>
 
                 <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
                   <div className="flex justify-between items-center mb-4">
-                    <h4 className="text-lg font-medium text-gray-900 dark:text-white">Notes</h4>
+                    <h4 className="text-lg font-medium text-gray-900 dark:text-white">
+                      Notes
+                    </h4>
                     <button
                       onClick={() => setIsEditingNotes(!isEditingNotes)}
                       className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
@@ -187,13 +274,13 @@ const ApplicantDetailModal: React.FC<ApplicantDetailModalProps> = ({
                           disabled={isUpdating}
                           className="px-3 py-1.5 border border-transparent rounded text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
                         >
-                          {isUpdating ? 'Saving...' : 'Save'}
+                          {isUpdating ? "Saving..." : "Save"}
                         </button>
                       </div>
                     </div>
                   ) : (
                     <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                      {applicant.notes || 'No notes added.'}
+                      {applicant.notes || "No notes added."}
                     </p>
                   )}
                 </div>
@@ -220,10 +307,12 @@ const ApplicantDetailModal: React.FC<ApplicantDetailModalProps> = ({
                       <button
                         key={option.value}
                         onClick={() => handleStatusUpdate(option.value)}
-                        disabled={isUpdating || applicant.status === option.value}
+                        disabled={
+                          isUpdating || applicant.status === option.value
+                        }
                         className={`w-full text-left px-4 py-2 rounded-md text-sm font-medium text-white ${option.color} disabled:opacity-50 disabled:cursor-not-allowed`}
                       >
-                        {applicant.status === option.value ? '✓ ' : ''}
+                        {applicant.status === option.value ? "✓ " : ""}
                         {option.label}
                       </button>
                     ))}

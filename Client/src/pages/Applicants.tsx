@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 import {
   Search,
   Filter,
@@ -20,6 +22,9 @@ import ApplicantDetailModal from "../components/ApplicantDetailModal";
 import UploadApplicantModal from "../components/UploadApplicantModal";
 
 const Applicants: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const jobIdFromUrl = searchParams.get("job");
+
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [selectedApplicants, setSelectedApplicants] = useState<number[]>([]);
@@ -31,7 +36,7 @@ const Applicants: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState({
-    job: "",
+    job: jobIdFromUrl || "",
     status: "",
     dateFrom: "",
     dateTo: "",
@@ -97,29 +102,102 @@ const Applicants: React.FC = () => {
   };
 
   const handleUpdateStatus = async (applicantId: number, status: string) => {
-    try {
-      await axios.post(`/api/applicants/${applicantId}/update_status/`, {
-        status,
-      });
-      fetchApplicants();
-    } catch (err) {
-      console.error("Failed to update status:", err);
-    }
+    const applicant = applicants.find((app) => app.id === applicantId);
+    if (!applicant) return;
+
+    // Show SweetAlert confirmation
+    Swal.fire({
+      title: "Update Status",
+      html: `<p>Change status for <strong>${
+        applicant.name
+      }</strong> to <strong>${status.toUpperCase()}</strong>?</p>`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3b82f6",
+      cancelButtonColor: "#ef4444",
+      confirmButtonText: "Yes, update it!",
+      cancelButtonText: "Cancel",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.post(`/api/applicants/${applicantId}/update_status/`, {
+            status,
+          });
+
+          // Show success message
+          Swal.fire({
+            title: "Success!",
+            text: `Status updated to ${status} and email notification sent to applicant.`,
+            icon: "success",
+            confirmButtonColor: "#3b82f6",
+            timer: 3000,
+            timerProgressBar: true,
+          });
+
+          fetchApplicants();
+        } catch (err) {
+          console.error("Failed to update status:", err);
+          Swal.fire({
+            title: "Error!",
+            text: "Failed to update status. Please try again.",
+            icon: "error",
+            confirmButtonColor: "#ef4444",
+          });
+        }
+      }
+    });
   };
 
   const handleBulkUpdateStatus = async (status: string) => {
     if (selectedApplicants.length === 0) return;
 
-    try {
-      await axios.post("/api/applicants/bulk_update_status/", {
-        applicant_ids: selectedApplicants,
-        status,
-      });
-      setSelectedApplicants([]);
-      fetchApplicants();
-    } catch (err) {
-      console.error("Failed to bulk update status:", err);
-    }
+    // Show SweetAlert confirmation
+    Swal.fire({
+      title: "Bulk Update Status",
+      html: `<p>Update status for <strong>${
+        selectedApplicants.length
+      }</strong> applicant(s) to <strong>${status.toUpperCase()}</strong>?</p>`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3b82f6",
+      cancelButtonColor: "#ef4444",
+      confirmButtonText: "Yes, update all!",
+      cancelButtonText: "Cancel",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.post("/api/applicants/bulk_update_status/", {
+            applicant_ids: selectedApplicants,
+            status,
+          });
+
+          // Show success message
+          Swal.fire({
+            title: "Success!",
+            text: `${selectedApplicants.length} applicant(s) updated to ${status} and notifications sent.`,
+            icon: "success",
+            confirmButtonColor: "#3b82f6",
+            timer: 3000,
+            timerProgressBar: true,
+          });
+
+          setSelectedApplicants([]);
+          fetchApplicants();
+        } catch (err) {
+          console.error("Failed to bulk update status:", err);
+          Swal.fire({
+            title: "Error!",
+            text: "Failed to update status. Please try again.",
+            icon: "error",
+            confirmButtonColor: "#ef4444",
+          });
+        }
+      }
+    });
   };
 
   const exportCSV = async () => {

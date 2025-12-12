@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/Layout';
+import PublicLayout from './components/PublicLayout';
+import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -16,21 +18,30 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <Router>
-          <Routes>
-            <Route path="/careers" element={<Careers />} />
-            <Route path="/careers/:id" element={<JobDetail />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/" element={
+           <Routes>
+            {/* Public routes with PublicLayout */}
+            <Route element={<PublicLayout><Home /></PublicLayout>} path="/" />
+            <Route element={<PublicLayout><Careers /></PublicLayout>} path="/careers" />
+            <Route element={<PublicLayout><JobDetail /></PublicLayout>} path="/careers/:id" />
+            <Route element={<PublicLayout><Login /></PublicLayout>} path="/login" />
+            <Route element={<PublicLayout><Register /></PublicLayout>} path="/register" />
+            
+            {/* Protected routes with Layout (Sidebar) */}
+            <Route element={
               <PrivateRoute>
                 <Layout />
               </PrivateRoute>
             }>
-              <Route index element={<Navigate to="/dashboard" replace />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="jobs" element={<Jobs />} />
-              <Route path="applicants" element={<Applicants />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/jobs" element={<Jobs />} />
+              <Route path="/applicants" element={<Applicants />} />
+              <Route path="/reports" element={<div>Reports Page</div>} />
+              <Route path="/settings" element={<div>Settings Page</div>} />
+              <Route path="/profile" element={<div>Profile Page</div>} />
             </Route>
+            
+            {/* Catch all route */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Router>
       </AuthProvider>
