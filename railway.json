@@ -1,5 +1,5 @@
 {
-  "root": "backend",
+  "root": "server",
   "build": {
     "command": "pip install -r requirements.txt"
   },
