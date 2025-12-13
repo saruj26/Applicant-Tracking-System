@@ -59,21 +59,5 @@ class Applicant(models.Model):
     def get_resume_filename(self):
         return os.path.basename(self.resume.name)
     
-    def save(self, *args, **kwargs):
-        # Simple keyword extraction and scoring logic
-        if self.cover_letter or self.resume:
-            job_desc = self.job.description.lower() if self.job else ""
-            content = (self.cover_letter or "").lower()
-            
-            # Simple keyword matching
-            important_keywords = ['python', 'django', 'react', 'javascript', 'experience', 
-                                  'project', 'team', 'development', 'software']
-            found_keywords = []
-            for keyword in important_keywords:
-                if keyword in content or keyword in job_desc:
-                    found_keywords.append(keyword)
-            
-            self.keywords = ", ".join(found_keywords)
-            self.match_score = len(found_keywords) * 10
-            
-        super().save(*args, **kwargs)
+    # Note: ATS scoring is now handled in views.py using ats_scorer.py
+    # This ensures resume file processing happens correctly

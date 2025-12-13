@@ -20,6 +20,7 @@ from .serializers import (
     BulkStatusUpdateSerializer, DashboardStatsSerializer
 )
 from .email_service import send_application_confirmation_email, send_status_update_email
+from .ats_scorer import calculate_ats_score
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
@@ -104,6 +105,46 @@ class ApplicantViewSet(viewsets.ModelViewSet):
     search_fields = ['name', 'email', 'cover_letter', 'keywords']
     ordering_fields = ['created_at', 'updated_at', 'match_score', 'name']
     ordering = ['-created_at']
+    
+    def perform_create(self, serializer):
+        """Override create to calculate ATS score"""
+        applicant = serializer.save()
+        
+        # Calculate ATS score if resume is provided
+        if applicant.resume:
+            try:
+                ats_result = calculate_ats_score(
+                    resume_file=applicant.resume,
+                    job_description=applicant.job.description,
+                    job_requirements=applicant.job.requirements or "",
+                    cover_letter=applicant.cover_letter or ""
+                )
+                
+                applicant.match_score = int(ats_result['overall_score'])
+                applicant.keywords = ", ".join(ats_result['matched_keywords'][:10])
+                applicant.save()
+            except Exception as e:
+                print(f"ATS scoring error in perform_create: {e}")
+    
+    def perform_update(self, serializer):
+        """Override update to recalculate ATS score if resume changes"""
+        applicant = serializer.save()
+        
+        # Recalculate if resume was updated
+        if 'resume' in self.request.FILES:
+            try:
+                ats_result = calculate_ats_score(
+                    resume_file=applicant.resume,
+                    job_description=applicant.job.description,
+                    job_requirements=applicant.job.requirements or "",
+                    cover_letter=applicant.cover_letter or ""
+                )
+                
+                applicant.match_score = int(ats_result['overall_score'])
+                applicant.keywords = ", ".join(ats_result['matched_keywords'][:10])
+                applicant.save()
+            except Exception as e:
+                print(f"ATS scoring error in perform_update: {e}")
     
     def get_queryset(self):
         queryset = Applicant.objects.all().select_related('job')
@@ -323,6 +364,25 @@ def public_application_create(request):
         if serializer.is_valid():
             applicant_instance = serializer.save()
             
+            # Calculate ATS score
+            try:
+                resume_file = request.FILES.get('resume')
+                if resume_file:
+                    ats_result = calculate_ats_score(
+                        resume_file=resume_file,
+                        job_description=job.description,
+                        job_requirements=job.requirements or "",
+                        cover_letter=request.data.get('cover_letter', '')
+                    )
+                    
+                    # Update applicant with ATS score and keywords
+                    applicant_instance.match_score = int(ats_result['overall_score'])
+                    applicant_instance.keywords = ", ".join(ats_result['matched_keywords'][:10])
+                    applicant_instance.save()
+            except Exception as e:
+                print(f"ATS scoring error: {e}")
+                # Continue even if scoring fails
+            
             # Send confirmation email to applicant
             email_result = send_application_confirmation_email(
                 applicant_data={
@@ -338,7 +398,8 @@ def public_application_create(request):
                     'success': True,
                     'message': 'Application submitted successfully!',
                     'application_id': serializer.data['id'],
-                    'email_sent': email_result.get('success', False)
+                    'email_sent': email_result.get('success', False),
+                    'match_score': applicant_instance.match_score
                 },
                 status=status.HTTP_201_CREATED
             )
