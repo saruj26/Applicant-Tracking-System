@@ -17,6 +17,7 @@ django-filter>=22.1
 # File Processing for ATS
 python-docx>=0.8.11
 PyPDF2>=3.0.0
+whitenoise>=6.4.0
 
 # NLP (Optional - for advanced text processing)
 # Uncomment if you want to use spaCy for advanced NLP
