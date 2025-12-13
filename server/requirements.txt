@@ -1,31 +1,12 @@
-# Django Core
 Django>=4.0,<5.0
 djangorestframework>=3.14.0
-
-# Database
 psycopg2-binary>=2.9.0
-
-# Authentication
 djangorestframework-simplejwt>=5.2.0
-
-# CORS
 django-cors-headers>=3.13.0
-
-# Filtering
 django-filter>=22.1
-
-# File Processing for ATS
 python-docx>=0.8.11
 PyPDF2>=3.0.0
 whitenoise>=6.4.0
-
-# NLP (Optional - for advanced text processing)
-# Uncomment if you want to use spaCy for advanced NLP
-# spacy>=3.5.0
-# Run: python -m spacy download en_core_web_sm
-
-# Email
-# Email backend configured in settings.py
-
-# Development
-python-decouple>=3.6  # For environment variables
+python-decouple>=3.6
+dj-database-url>=0.5.0
+gunicorn>=20.1.0
