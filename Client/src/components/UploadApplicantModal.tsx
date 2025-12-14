@@ -480,7 +480,7 @@ const UploadApplicantModal: React.FC<UploadApplicantModalProps> = ({
                           onChange={handleInputChange}
                           disabled={isUploading}
                           className="pl-10 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                          placeholder="+1 (555) 123-4567"
+                          placeholder="+94 21 234 2345"
                         />
                       </div>
                     </div>

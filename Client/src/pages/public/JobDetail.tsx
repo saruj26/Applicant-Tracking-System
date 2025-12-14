@@ -257,44 +257,50 @@ const JobDetail: React.FC = () => {
 
       <div className="container mx-auto px-4 pb-16">
         <div className="max-w-6xl mx-auto">
-          {/* Job Header */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-8">
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-4">
-                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                    {job.title}
-                  </h1>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                    <CheckCircle className="h-4 w-4 mr-1" />
-                    Accepting Applications
-                  </span>
-                </div>
+          {/* Two Column Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Left Column - Job Details */}
+            <div className="lg:col-span-2 space-y-8">
+              {/* Job Header */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-8">
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-4">
+                      <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                        {job.title}
+                      </h1>
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                        <CheckCircle className="h-4 w-4 mr-1" />
+                        Accepting Applications
+                      </span>
+                    </div>
 
-                <div className="flex flex-wrap items-center gap-4 text-gray-600 dark:text-gray-400 mb-6">
-                  {job.location && (
-                    <div className="flex items-center">
-                      <MapPin className="h-5 w-5 mr-2" />
-                      {job.location}
+                    <div className="flex flex-wrap items-center gap-4 text-gray-600 dark:text-gray-400 mb-6">
+                      {job.location && (
+                        <div className="flex items-center">
+                          <MapPin className="h-5 w-5 mr-2" />
+                          {job.location}
+                        </div>
+                      )}
+                      {job.salary_range && (
+                        <div className="flex items-center">
+                          LKR <span className="ml-1">{job.salary_range}</span>
+                        </div>
+                      )}
+                      <div className="flex items-center">
+                        <Calendar className="h-5 w-5 mr-2" />
+                        Posted {formatDate(job.created_at)}
+                      </div>
                     </div>
-                  )}
-                  {job.salary_range && (
-                    <div className="flex items-center">
-                      LKR <span className="ml-1">{job.salary_range}</span>
-                    </div>
-                  )}
-                  <div className="flex items-center">
-                    <Calendar className="h-5 w-5 mr-2" />
-                    Posted {formatDate(job.created_at)}
+
+                    <p className="text-lg text-gray-700 dark:text-gray-300">
+                      {job.description}
+                    </p>
                   </div>
                 </div>
-
-                <p className="text-lg text-gray-700 dark:text-gray-300">
-                  {job.description}
-                </p>
               </div>
 
-              <div className="md:w-96">
+            
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                     Ready to Apply?
@@ -322,14 +328,7 @@ const JobDetail: React.FC = () => {
                     Average response time: 3-5 business days
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Two Column Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column - Job Details */}
-            <div className="lg:col-span-2 space-y-8">
+              
               {/* Requirements */}
               {job.requirements && (
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
@@ -389,7 +388,7 @@ const JobDetail: React.FC = () => {
             </div>
 
             {/* Right Column - Application Form */}
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-2">
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 sticky top-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                   Apply for This Position
@@ -461,7 +460,7 @@ const JobDetail: React.FC = () => {
                         onChange={handleInputChange}
                         disabled={isSubmitting}
                         className="pl-10 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 disabled:opacity-50"
-                        placeholder="+1 (555) 123-4567"
+                        placeholder="+94 21 234 2345"
                       />
                     </div>
                   </div>

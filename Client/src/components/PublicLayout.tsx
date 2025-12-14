@@ -241,14 +241,14 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                 <div className="flex items-start">
                   <MapPin className="h-5 w-5 text-blue-400 mr-3 flex-shrink-0 mt-1" />
                   <span className="text-gray-400">
-                    123 Innovation Drive
+                    134 Hospital Street,
                     <br />
-                    San Francisco, CA 94107
+                    Jaffna, Sri Lanka
                   </span>
                 </div>
                 <div className="flex items-center">
                   <Phone className="h-5 w-5 text-blue-400 mr-3 flex-shrink-0" />
-                  <span className="text-gray-400">+1 (555) 123-4567</span>
+                  <span className="text-gray-400">+94 21 234 2345</span>
                 </div>
                 <div className="flex items-center">
                   <Mail className="h-5 w-5 text-blue-400 mr-3 flex-shrink-0" />
