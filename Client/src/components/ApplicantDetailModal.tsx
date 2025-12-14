@@ -7,25 +7,17 @@ import {
   Phone,
   Calendar,
   FileText,
-  Briefcase,
-  Award,
   Download,
   Edit,
   User,
-  MapPin,
   Star,
   Copy,
   CheckCircle,
-  Clock,
   MessageSquare,
   ChevronRight,
   Tag,
   Eye,
   Send,
-  ExternalLink,
-  DollarSign,
-  Users,
-  Link,
 } from "lucide-react";
 import type { Applicant } from "../types";
 import StatusBadge from "./StatusBadge";
@@ -349,7 +341,7 @@ const ApplicantDetailModal: React.FC<ApplicantDetailModalProps> = ({
 
               {/* Middle Column - Resume & Cover Letter */}
               <div className="space-y-6 h-full">
-                 {/* Resume Card */}
+                {/* Resume Card */}
                 <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 h-[calc(50%-1.5rem)] flex flex-col">
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-1 flex items-center">
                     <FileText className="h-4 w-4 mr-2 text-blue-500" />
@@ -407,8 +399,6 @@ const ApplicantDetailModal: React.FC<ApplicantDetailModalProps> = ({
                     </p>
                   </div>
                 </div>
-
-                
               </div>
 
               {/* Right Column - Status & Actions */}
@@ -509,7 +499,7 @@ const ApplicantDetailModal: React.FC<ApplicantDetailModalProps> = ({
                       </p>
                     </div>
                   )}
-                </div>              
+                </div>
               </div>
             </div>
           </div>

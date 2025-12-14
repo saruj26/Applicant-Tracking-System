@@ -8,8 +8,6 @@ import {
   Download,
   Eye,
   Mail,
-  Phone,
-  Calendar,
   FileText,
   CheckSquare,
   Square,
@@ -70,13 +68,15 @@ const Applicants: React.FC = () => {
 
       const response = await api.get(`/applicants/?${params}`);
       const data = response.data.results || response.data;
-      
+
       // Sort the data
       const sortedData = [...data].sort((a, b) => {
         if (sortConfig.key === "date") {
           return sortConfig.direction === "asc"
-            ? new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-            : new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+            ? new Date(a.created_at).getTime() -
+                new Date(b.created_at).getTime()
+            : new Date(b.created_at).getTime() -
+                new Date(a.created_at).getTime();
         } else if (sortConfig.key === "score") {
           return sortConfig.direction === "asc"
             ? a.match_score - b.match_score
@@ -88,7 +88,7 @@ const Applicants: React.FC = () => {
         }
         return 0;
       });
-      
+
       setApplicants(sortedData);
     } catch (err) {
       console.error("Failed to fetch applicants:", err);
@@ -353,7 +353,9 @@ const Applicants: React.FC = () => {
             <div>
               <select
                 value={filters.job}
-                onChange={(e) => setFilters({ ...filters, job: e.target.value })}
+                onChange={(e) =>
+                  setFilters({ ...filters, job: e.target.value })
+                }
                 className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">All Jobs</option>
@@ -368,7 +370,9 @@ const Applicants: React.FC = () => {
             <div>
               <select
                 value={filters.status}
-                onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                onChange={(e) =>
+                  setFilters({ ...filters, status: e.target.value })
+                }
                 className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">All Status</option>

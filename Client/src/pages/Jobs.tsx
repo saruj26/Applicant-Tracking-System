@@ -18,7 +18,6 @@ import {
   ChevronsUpDown,
   ChevronDown,
   ChevronUp,
-  DollarSign,
   ExternalLink,
   FileText,
   RefreshCw,
@@ -35,7 +34,6 @@ const Jobs: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [expandedJobId, setExpandedJobId] = useState<number | null>(null);
   const [sortConfig, setSortConfig] = useState<{
