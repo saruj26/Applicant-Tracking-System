@@ -5,7 +5,6 @@ import {
   ArrowLeft,
   MapPin,
   Calendar,
-  DollarSign,
   Clock,
   CheckCircle,
   Upload,
@@ -281,8 +280,7 @@ const JobDetail: React.FC = () => {
                   )}
                   {job.salary_range && (
                     <div className="flex items-center">
-                      <DollarSign className="h-5 w-5 mr-2" />
-                      {job.salary_range}
+                      LKR <span className="ml-1">{job.salary_range}</span>
                     </div>
                   )}
                   <div className="flex items-center">

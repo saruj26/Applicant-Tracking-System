@@ -94,7 +94,7 @@ const Home: React.FC = () => {
         {/* Background Image */}
         <div className="absolute inset-0 -z-10">
           <img
-            src="https://gdhinc.com/wp-content/uploads/2015/08/on-a-second-IT-interview.jpg"
+            src="https://craftmycv.com/blog/wp-content/uploads/2020/11/Interview-Questions-1024x576.jpg"
             alt="Career opportunities"
             className="w-full h-full object-cover"
           />
@@ -138,7 +138,7 @@ const Home: React.FC = () => {
             </div>
 
             {showContactCard && (
-              <div className="hidden lg:block absolute bottom-6 right-6 lg:bottom-2 lg:-right-8 w-full lg:w-2/5 max-w-md">
+              <div className="hidden lg:block absolute bottom-6 right-6 lg:bottom-2 lg:right-1 w-full lg:w-2/5 max-w-md">
                 <div className="relative bg-white/70 backdrop-blur-xl rounded-3xl p-6 md:p-8 shadow-2xl border border-white/40 hover:shadow-3xl transition-all duration-300">
                   <button
                     onClick={() => setShowContactCard(false)}

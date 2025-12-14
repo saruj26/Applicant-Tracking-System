@@ -6,7 +6,6 @@ import {
   Filter,
   MapPin,
   Calendar,
-  DollarSign,
   Briefcase,
   CheckCircle,
   ExternalLink,
@@ -242,8 +241,8 @@ const Careers: React.FC = () => {
                       )}
                       {job.salary_range && (
                         <div className="flex items-center">
-                          <DollarSign className="h-4 w-4 mr-2 flex-shrink-0" />
-                          <span>{job.salary_range}</span>
+                         
+                          LKR <span>{job.salary_range}</span>
                         </div>
                       )}
                       <div className="flex items-center">

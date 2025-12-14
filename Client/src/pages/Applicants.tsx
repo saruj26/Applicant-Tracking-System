@@ -15,6 +15,9 @@ import {
   Square,
   Users,
   Upload,
+  ChevronUp,
+  ChevronDown,
+  ChevronsUpDown,
 } from "lucide-react";
 import type { Applicant, Job } from "../types";
 import StatusBadge from "../components/StatusBadge";
@@ -42,6 +45,13 @@ const Applicants: React.FC = () => {
     dateTo: "",
     minScore: "",
   });
+  const [sortConfig, setSortConfig] = useState<{
+    key: "date" | "score" | "name";
+    direction: "asc" | "desc";
+  }>({
+    key: "date",
+    direction: "desc",
+  });
 
   useEffect(() => {
     fetchApplicants();
@@ -59,7 +69,27 @@ const Applicants: React.FC = () => {
       if (search) params.append("search", search);
 
       const response = await api.get(`/applicants/?${params}`);
-      setApplicants(response.data.results || response.data);
+      const data = response.data.results || response.data;
+      
+      // Sort the data
+      const sortedData = [...data].sort((a, b) => {
+        if (sortConfig.key === "date") {
+          return sortConfig.direction === "asc"
+            ? new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+            : new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        } else if (sortConfig.key === "score") {
+          return sortConfig.direction === "asc"
+            ? a.match_score - b.match_score
+            : b.match_score - a.match_score;
+        } else if (sortConfig.key === "name") {
+          return sortConfig.direction === "asc"
+            ? a.name.localeCompare(b.name)
+            : b.name.localeCompare(a.name);
+        }
+        return 0;
+      });
+      
+      setApplicants(sortedData);
     } catch (err) {
       console.error("Failed to fetch applicants:", err);
     } finally {
@@ -70,7 +100,6 @@ const Applicants: React.FC = () => {
   const fetchJobs = async () => {
     try {
       const response = await api.get("/jobs/");
-      // Handle both paginated and direct array responses
       const jobsData = Array.isArray(response.data)
         ? response.data
         : response.data.results || [];
@@ -78,6 +107,13 @@ const Applicants: React.FC = () => {
     } catch (err) {
       console.error("Failed to fetch jobs:", err);
     }
+  };
+
+  const handleSort = (key: "date" | "score" | "name") => {
+    setSortConfig((prev) => ({
+      key,
+      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
+    }));
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -105,7 +141,6 @@ const Applicants: React.FC = () => {
     const applicant = applicants.find((app) => app.id === applicantId);
     if (!applicant) return;
 
-    // Show SweetAlert confirmation
     Swal.fire({
       title: "Update Status",
       html: `<p>Change status for <strong>${
@@ -126,7 +161,6 @@ const Applicants: React.FC = () => {
             status,
           });
 
-          // Show success message
           Swal.fire({
             title: "Success!",
             text: `Status updated to ${status} and email notification sent to applicant.`,
@@ -153,7 +187,6 @@ const Applicants: React.FC = () => {
   const handleBulkUpdateStatus = async (status: string) => {
     if (selectedApplicants.length === 0) return;
 
-    // Show SweetAlert confirmation
     Swal.fire({
       title: "Bulk Update Status",
       html: `<p>Update status for <strong>${
@@ -175,7 +208,6 @@ const Applicants: React.FC = () => {
             status,
           });
 
-          // Show success message
           Swal.fire({
             title: "Success!",
             text: `${selectedApplicants.length} applicant(s) updated to ${status} and notifications sent.`,
@@ -221,6 +253,7 @@ const Applicants: React.FC = () => {
     return new Date(dateString).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
+      year: "numeric",
     });
   };
 
@@ -248,7 +281,7 @@ const Applicants: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Applicants
           </h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
@@ -258,14 +291,14 @@ const Applicants: React.FC = () => {
         <div className="flex space-x-3">
           <button
             onClick={exportCSV}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="inline-flex items-center px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
           >
             <Download className="mr-2 h-4 w-4" />
             Export CSV
           </button>
           <button
             onClick={() => setIsUploadModalOpen(true)}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="inline-flex items-center px-4 py-2.5 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all"
           >
             <Upload className="mr-2 h-4 w-4" />
             Upload Applicant
@@ -273,44 +306,55 @@ const Applicants: React.FC = () => {
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4">
-        <form onSubmit={handleSearch} className="space-y-4">
-          <div className="flex space-x-4">
-            <div className="flex-1">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  placeholder="Search applicants..."
-                />
-              </div>
-            </div>
-            <button
-              type="submit"
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              <Filter className="mr-2 h-4 w-4" />
-              Search
-            </button>
+      {/* Compact Professional Filters */}
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
+              Filter Applicants
+            </h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Refine your search criteria
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setFilters({
+                job: jobIdFromUrl || "",
+                status: "",
+                dateFrom: "",
+                dateTo: "",
+                minScore: "",
+              });
+              setSearch("");
+            }}
+            className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 font-medium mt-2 md:mt-0"
+          >
+            Clear filters
+          </button>
+        </div>
+
+        <form onSubmit={handleSearch} className="space-y-3">
+          {/* Search Row */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-3 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Search by name, email, or skills..."
+            />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          {/* Compact Filter Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Job
-              </label>
               <select
                 value={filters.job}
-                onChange={(e) =>
-                  setFilters({ ...filters, job: e.target.value })
-                }
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md dark:bg-gray-700"
+                onChange={(e) => setFilters({ ...filters, job: e.target.value })}
+                className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">All Jobs</option>
                 {jobs.map((job) => (
@@ -322,15 +366,10 @@ const Applicants: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Status
-              </label>
               <select
                 value={filters.status}
-                onChange={(e) =>
-                  setFilters({ ...filters, status: e.target.value })
-                }
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md dark:bg-gray-700"
+                onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">All Status</option>
                 {statusOptions.map((option) => (
@@ -342,9 +381,6 @@ const Applicants: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Min Score
-              </label>
               <input
                 type="number"
                 min="0"
@@ -353,65 +389,79 @@ const Applicants: React.FC = () => {
                 onChange={(e) =>
                   setFilters({ ...filters, minScore: e.target.value })
                 }
-                className="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
-                placeholder="0-100"
+                className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Min Score"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                From Date
-              </label>
               <input
                 type="date"
                 value={filters.dateFrom}
                 onChange={(e) =>
                   setFilters({ ...filters, dateFrom: e.target.value })
                 }
-                className="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
+                className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                To Date
-              </label>
               <input
                 type="date"
                 value={filters.dateTo}
                 onChange={(e) =>
                   setFilters({ ...filters, dateTo: e.target.value })
                 }
-                className="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
+                className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
+          </div>
+
+          <div className="flex justify-between items-center pt-2">
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              {applicants.length} applicants
+            </span>
+            <button
+              type="submit"
+              className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all duration-200 flex items-center"
+            >
+              <Filter className="mr-2 h-4 w-4" />
+              Apply Filters
+            </button>
           </div>
         </form>
       </div>
 
       {/* Bulk Actions */}
       {selectedApplicants.length > 0 && (
-        <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <CheckSquare className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" />
-              <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                {selectedApplicants.length} applicant(s) selected
-              </span>
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center mb-3 sm:mb-0">
+              <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-3">
+                <CheckSquare className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                  {selectedApplicants.length} applicant(s) selected
+                </span>
+                <p className="text-xs text-blue-600 dark:text-blue-300 mt-1">
+                  Choose action for all selected
+                </p>
+              </div>
             </div>
-            <div className="flex space-x-2">
+            <div className="flex flex-wrap gap-2">
               {statusOptions.map((option) => (
                 <button
                   key={option.value}
                   onClick={() => handleBulkUpdateStatus(option.value)}
-                  className={`inline-flex items-center px-3 py-1.5 rounded text-xs font-medium ${option.color}`}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium ${option.color} hover:opacity-90 transition-opacity`}
                 >
                   Mark as {option.label}
                 </button>
               ))}
               <button
                 onClick={() => setSelectedApplicants([])}
-                className="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 Clear
               </button>
@@ -420,20 +470,22 @@ const Applicants: React.FC = () => {
         </div>
       )}
 
-      {/* Applicants Table */}
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+      {/* Professional Table */}
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
           </div>
         ) : applicants.length === 0 ? (
-          <div className="text-center py-12">
-            <Users className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">
+          <div className="text-center py-16">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 mb-4">
+              <Users className="h-8 w-8 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
               No applicants found
             </h3>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Try adjusting your filters or upload new applicants.
+            <p className="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
+              Try adjusting your search filters or upload new applicants.
             </p>
           </div>
         ) : (
@@ -441,98 +493,116 @@ const Applicants: React.FC = () => {
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-900">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="pl-6 pr-3 py-3">
                     <button
                       onClick={handleSelectAll}
                       className="focus:outline-none"
                     >
                       {selectedApplicants.length === applicants.length ? (
-                        <CheckSquare className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                        <CheckSquare className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       ) : (
-                        <Square className="h-5 w-5 text-gray-400" />
+                        <Square className="h-4 w-4 text-gray-400" />
                       )}
                     </button>
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-3 py-3 text-left text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
                     Applicant
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Job
+                  <th className="px-3 py-3 text-left text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
+                    Position
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-3 py-3 text-left text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Date
+                  <th className="px-3 py-3 text-left text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
+                    <button
+                      onClick={() => handleSort("date")}
+                      className="flex items-center space-x-1 focus:outline-none"
+                    >
+                      <span>Applied Date</span>
+                      {sortConfig.key === "date" ? (
+                        sortConfig.direction === "asc" ? (
+                          <ChevronUp className="h-4 w-4" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4" />
+                        )
+                      ) : (
+                        <ChevronsUpDown className="h-4 w-4" />
+                      )}
+                    </button>
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Score
+                  <th className="px-3 py-3 text-left text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
+                    <button
+                      onClick={() => handleSort("score")}
+                      className="flex items-center space-x-1 focus:outline-none"
+                    >
+                      <span>Match Score</span>
+                      {sortConfig.key === "score" ? (
+                        sortConfig.direction === "asc" ? (
+                          <ChevronUp className="h-4 w-4" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4" />
+                        )
+                      ) : (
+                        <ChevronsUpDown className="h-4 w-4" />
+                      )}
+                    </button>
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-3 py-3 text-left text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {applicants.map((applicant) => (
                   <tr
                     key={applicant.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                   >
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="pl-6 pr-3 py-4">
                       <button
                         onClick={() => handleSelectApplicant(applicant.id)}
                         className="focus:outline-none"
                       >
                         {selectedApplicants.includes(applicant.id) ? (
-                          <CheckSquare className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                          <CheckSquare className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                         ) : (
-                          <Square className="h-5 w-5 text-gray-400" />
+                          <Square className="h-4 w-4 text-gray-400" />
                         )}
                       </button>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-4">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10">
-                          <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                            <span className="text-blue-600 dark:text-blue-400 font-medium">
-                              {applicant.name.charAt(0)}
-                            </span>
-                          </div>
+                        <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white font-semibold">
+                          {applicant.name.charAt(0)}
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
                             {applicant.name}
                           </div>
-                          <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                          <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mt-1">
                             <Mail className="mr-1 h-3 w-3" />
                             {applicant.email}
                           </div>
-                          {applicant.phone && (
-                            <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                              <Phone className="mr-1 h-3 w-3" />
-                              {applicant.phone}
-                            </div>
-                          )}
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900 dark:text-white">
+                    <td className="px-3 py-4">
+                      <div className="text-sm text-gray-900 dark:text-white font-medium">
                         {applicant.job_title}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-4">
                       <div className="flex items-center space-x-2">
                         <StatusBadge status={applicant.status} />
-                        <div className="flex space-x-1">
+                        <div className="flex">
                           {statusOptions.map((option) => (
                             <button
                               key={option.value}
                               onClick={() =>
                                 handleUpdateStatus(applicant.id, option.value)
                               }
-                              className={`text-xs px-2 py-1 rounded ${option.color} opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity`}
+                              className={`ml-1 text-xs px-2 py-1 rounded-full ${option.color} opacity-70 hover:opacity-100 transition-opacity`}
                               title={`Mark as ${option.label}`}
                             >
                               {option.label.charAt(0)}
@@ -541,47 +611,60 @@ const Applicants: React.FC = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                        <Calendar className="mr-2 h-4 w-4" />
+                    <td className="px-3 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900 dark:text-white">
                         {formatDate(applicant.created_at)}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-                          <div
-                            className="bg-green-600 h-2.5 rounded-full"
-                            style={{
-                              width: `${Math.min(applicant.match_score, 100)}%`,
-                            }}
-                          ></div>
+                    <td className="px-3 py-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-24">
+                          <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full ${
+                                applicant.match_score >= 80
+                                  ? "bg-green-500"
+                                  : applicant.match_score >= 60
+                                  ? "bg-yellow-500"
+                                  : "bg-red-500"
+                              }`}
+                              style={{ width: `${applicant.match_score}%` }}
+                            />
+                          </div>
                         </div>
-                        <span className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
+                        <span
+                          className={`text-sm font-semibold ${
+                            applicant.match_score >= 80
+                              ? "text-green-600 dark:text-green-400"
+                              : applicant.match_score >= 60
+                              ? "text-yellow-600 dark:text-yellow-400"
+                              : "text-red-600 dark:text-red-400"
+                          }`}
+                        >
                           {applicant.match_score}%
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <td className="px-3 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => {
                             setSelectedApplicant(applicant);
                             setIsDetailModalOpen(true);
                           }}
-                          className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                          className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
                           title="View Details"
                         >
-                          <Eye className="h-5 w-5" />
+                          <Eye className="h-4 w-4" />
                         </button>
                         <a
                           href={applicant.resume_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300"
+                          className="p-2 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                           title="Download Resume"
                         >
-                          <FileText className="h-5 w-5" />
+                          <FileText className="h-4 w-4" />
                         </a>
                       </div>
                     </td>
