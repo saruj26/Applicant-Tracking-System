@@ -242,7 +242,7 @@ const Careers: React.FC = () => {
                       {job.salary_range && (
                         <div className="flex items-center">
                          
-                          LKR <span>{job.salary_range}</span>
+                          LKR <span className="font-mono ml-1">{job.salary_range}</span>
                         </div>
                       )}
                       <div className="flex items-center">
