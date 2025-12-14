@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { Link } from "react-router-dom";
 import {
   Search,
@@ -31,7 +31,7 @@ const Careers: React.FC = () => {
 
   const fetchJobs = async () => {
     try {
-      const response = await axios.get("/api/public/jobs/");
+      const response = await api.get("/public/jobs/");
       setJobs(response.data);
     } catch (err) {
       console.error("Failed to fetch jobs:", err);

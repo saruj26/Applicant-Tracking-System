@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../api/axios";
 import {
   X,
   Upload,
@@ -221,7 +221,7 @@ const UploadApplicantModal: React.FC<UploadApplicantModalProps> = ({
         });
       }, 100);
 
-      await axios.post("/api/applicants/", data, {
+      await api.post("/applicants/", data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

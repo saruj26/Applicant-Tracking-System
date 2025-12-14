@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../api/axios"; 
 import Swal from "sweetalert2";
 import {
   X,
@@ -68,7 +68,7 @@ const ApplicantDetailModal: React.FC<ApplicantDetailModalProps> = ({
 
     try {
       setIsUpdating(true);
-      await axios.post(`/api/applicants/${applicant.id}/update_status/`, {
+      await api.post(`/applicants/${applicant.id}/update_status/`, {
         status,
         notes: notes || applicant.notes,
       });
@@ -107,7 +107,7 @@ const ApplicantDetailModal: React.FC<ApplicantDetailModalProps> = ({
   const handleSaveNotes = async () => {
     try {
       setIsUpdating(true);
-      await axios.patch(`/api/applicants/${applicant.id}/`, { notes });
+      await api.patch(`/applicants/${applicant.id}/`, { notes });
       setIsEditingNotes(false);
       onStatusUpdate();
     } catch (err) {

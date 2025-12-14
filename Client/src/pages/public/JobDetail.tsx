@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import api from "../../api/axios";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   MapPin,
@@ -12,9 +12,9 @@ import {
   Mail,
   FileText,
   AlertCircle,
-  CheckCircle2
-} from 'lucide-react';
-import type { Job } from '../../types';
+  CheckCircle2,
+} from "lucide-react";
+import type { Job } from "../../types";
 
 const JobDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -23,18 +23,18 @@ const JobDetail: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   // Application form state
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    cover_letter: '',
+    name: "",
+    email: "",
+    phone: "",
+    cover_letter: "",
     resume: null as File | null,
   });
   const [dragActive, setDragActive] = useState(false);
-  const [fileName, setFileName] = useState('');
+  const [fileName, setFileName] = useState("");
 
   useEffect(() => {
     if (id) {
@@ -44,20 +44,22 @@ const JobDetail: React.FC = () => {
 
   const fetchJob = async () => {
     try {
-      const response = await axios.get(`/api/public/jobs/${id}/`);
+      const response = await api.get(`/public/jobs/${id}/`);
       setJob(response.data);
     } catch (err) {
-      console.error('Failed to fetch job:', err);
-      navigate('/careers');
+      console.error("Failed to fetch job:", err);
+      navigate("/careers");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    setError('');
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setError("");
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,7 +81,7 @@ const JobDetail: React.FC = () => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     const file = e.dataTransfer.files?.[0];
     processFile(file);
   };
@@ -89,45 +91,51 @@ const JobDetail: React.FC = () => {
 
     // Validate file size (10MB limit)
     if (file.size > 10 * 1024 * 1024) {
-      setError('File size must be less than 10MB');
+      setError("File size must be less than 10MB");
       return;
     }
 
     // Validate file type
     const allowedTypes = [
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'text/plain',
-      'text/rtf',
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/plain",
+      "text/rtf",
     ];
-    
-    const fileExtension = file.name.split('.').pop()?.toLowerCase();
-    const allowedExtensions = ['.pdf', '.doc', '.docx', '.txt', '.rtf'];
-    
-    if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(`.${fileExtension}`)) {
-      setError('Please upload PDF, DOC, DOCX, TXT, or RTF files only');
+
+    const fileExtension = file.name.split(".").pop()?.toLowerCase();
+    const allowedExtensions = [".pdf", ".doc", ".docx", ".txt", ".rtf"];
+
+    if (
+      !allowedTypes.includes(file.type) &&
+      !allowedExtensions.includes(`.${fileExtension}`)
+    ) {
+      setError("Please upload PDF, DOC, DOCX, TXT, or RTF files only");
       return;
     }
 
-    setFormData(prev => ({ ...prev, resume: file }));
+    setFormData((prev) => ({ ...prev, resume: file }));
     setFileName(file.name);
-    setError('');
+    setError("");
   };
 
   const validateForm = (): boolean => {
     const newErrors: string[] = [];
 
-    if (!formData.name.trim()) newErrors.push('Name is required');
-    if (!formData.email.trim()) newErrors.push('Email is required');
-    if (!formData.resume) newErrors.push('Resume is required');
+    if (!formData.name.trim()) newErrors.push("Name is required");
+    if (!formData.email.trim()) newErrors.push("Email is required");
+    if (!formData.resume) newErrors.push("Resume is required");
 
-    if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.push('Please enter a valid email address');
+    if (
+      formData.email.trim() &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+    ) {
+      newErrors.push("Please enter a valid email address");
     }
 
     if (newErrors.length > 0) {
-      setError(newErrors.join('. '));
+      setError(newErrors.join(". "));
       return false;
     }
 
@@ -136,8 +144,8 @@ const JobDetail: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    
+    setError("");
+
     if (!validateForm() || !job) {
       return;
     }
@@ -146,53 +154,53 @@ const JobDetail: React.FC = () => {
 
     try {
       const data = new FormData();
-      data.append('name', formData.name.trim());
-      data.append('email', formData.email.trim());
-      data.append('job', job.id.toString());
-      if (formData.phone.trim()) data.append('phone', formData.phone.trim());
-      if (formData.cover_letter.trim()) data.append('cover_letter', formData.cover_letter.trim());
-      if (formData.resume) data.append('resume', formData.resume);
+      data.append("name", formData.name.trim());
+      data.append("email", formData.email.trim());
+      data.append("job", job.id.toString());
+      if (formData.phone.trim()) data.append("phone", formData.phone.trim());
+      if (formData.cover_letter.trim())
+        data.append("cover_letter", formData.cover_letter.trim());
+      if (formData.resume) data.append("resume", formData.resume);
 
-      await axios.post('/api/public/applications/', data, {
+      await api.post("/public/applications/", data, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
 
       setSubmitSuccess(true);
-      
+
       // Reset form
       setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        cover_letter: '',
+        name: "",
+        email: "",
+        phone: "",
+        cover_letter: "",
         resume: null,
       });
-      setFileName('');
+      setFileName("");
 
       // Auto-redirect after 5 seconds
       setTimeout(() => {
-        navigate('/careers');
+        navigate("/careers");
       }, 5000);
-
     } catch (err: any) {
       if (err.response?.status === 400) {
-        setError(err.response.data.error || 'Failed to submit application');
+        setError(err.response.data.error || "Failed to submit application");
       } else {
-        setError('Failed to submit application. Please try again.');
+        setError("Failed to submit application. Please try again.");
       }
-      console.error('Application error:', err);
+      console.error("Application error:", err);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
     });
   };
 
@@ -226,7 +234,8 @@ const JobDetail: React.FC = () => {
                 Application Submitted!
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Thank you for applying for the {job.title} position. We'll review your application and contact you if there's a match.
+                Thank you for applying for the {job.title} position. We'll
+                review your application and contact you if there's a match.
               </p>
               <div className="text-sm text-gray-500 dark:text-gray-400">
                 Redirecting to careers page in 5 seconds...
@@ -262,7 +271,7 @@ const JobDetail: React.FC = () => {
                     Accepting Applications
                   </span>
                 </div>
-                
+
                 <div className="flex flex-wrap items-center gap-4 text-gray-600 dark:text-gray-400 mb-6">
                   {job.location && (
                     <div className="flex items-center">
@@ -348,7 +357,8 @@ const JobDetail: React.FC = () => {
                       Competitive Compensation
                     </h3>
                     <p className="text-gray-600 dark:text-gray-400">
-                      We offer competitive salaries, bonuses, and equity packages.
+                      We offer competitive salaries, bonuses, and equity
+                      packages.
                     </p>
                   </div>
                   <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
@@ -356,7 +366,8 @@ const JobDetail: React.FC = () => {
                       Remote Flexibility
                     </h3>
                     <p className="text-gray-600 dark:text-gray-400">
-                      Work from anywhere with our fully remote or hybrid options.
+                      Work from anywhere with our fully remote or hybrid
+                      options.
                     </p>
                   </div>
                   <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
@@ -390,7 +401,9 @@ const JobDetail: React.FC = () => {
                   <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                     <div className="flex items-center">
                       <AlertCircle className="h-5 w-5 text-red-500 mr-2 flex-shrink-0" />
-                      <span className="text-red-700 dark:text-red-400">{error}</span>
+                      <span className="text-red-700 dark:text-red-400">
+                        {error}
+                      </span>
                     </div>
                   </div>
                 )}
@@ -463,9 +476,9 @@ const JobDetail: React.FC = () => {
                     {!fileName ? (
                       <div
                         className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                          dragActive 
-                            ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/20' 
-                            : 'border-gray-300 dark:border-gray-600 hover:border-blue-400'
+                          dragActive
+                            ? "border-blue-400 bg-blue-50 dark:bg-blue-900/20"
+                            : "border-gray-300 dark:border-gray-600 hover:border-blue-400"
                         }`}
                         onDragEnter={handleDrag}
                         onDragLeave={handleDrag}
@@ -474,7 +487,10 @@ const JobDetail: React.FC = () => {
                       >
                         <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
                         <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                          Drag & drop or <span className="text-blue-600 dark:text-blue-400">browse</span>
+                          Drag & drop or{" "}
+                          <span className="text-blue-600 dark:text-blue-400">
+                            browse
+                          </span>
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
                           PDF, DOC, DOCX, TXT, RTF (Max 10MB)
@@ -504,15 +520,24 @@ const JobDetail: React.FC = () => {
                                 {fileName}
                               </p>
                               <p className="text-xs text-gray-500 dark:text-gray-400">
-                                {formData.resume?.size ? `${(formData.resume.size / 1024 / 1024).toFixed(2)} MB` : ''}
+                                {formData.resume?.size
+                                  ? `${(
+                                      formData.resume.size /
+                                      1024 /
+                                      1024
+                                    ).toFixed(2)} MB`
+                                  : ""}
                               </p>
                             </div>
                           </div>
                           <button
                             type="button"
                             onClick={() => {
-                              setFormData(prev => ({ ...prev, resume: null }));
-                              setFileName('');
+                              setFormData((prev) => ({
+                                ...prev,
+                                resume: null,
+                              }));
+                              setFileName("");
                             }}
                             disabled={isSubmitting}
                             className="text-red-600 hover:text-red-800 dark:text-red-400"
@@ -546,12 +571,13 @@ const JobDetail: React.FC = () => {
                     disabled={isSubmitting}
                     className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isSubmitting ? 'Submitting...' : 'Submit Application'}
+                    {isSubmitting ? "Submitting..." : "Submit Application"}
                   </button>
 
                   {/* Privacy Note */}
                   <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                    By applying, you agree to our Privacy Policy. We'll only use your information for recruitment purposes.
+                    By applying, you agree to our Privacy Policy. We'll only use
+                    your information for recruitment purposes.
                   </p>
                 </form>
               </div>

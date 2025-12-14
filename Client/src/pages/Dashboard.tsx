@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import api from "../api/axios";
 import {
   Users,
   Briefcase,
@@ -10,15 +10,15 @@ import {
   TrendingUp,
   Calendar,
   Download,
-  Filter
-} from 'lucide-react';
-import type { DashboardStats } from '../types';
-import StatusBadge from '../components/StatusBadge';
+  Filter,
+} from "lucide-react";
+import type { DashboardStats } from "../types";
+import StatusBadge from "../components/StatusBadge";
 
 const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchDashboardStats();
@@ -26,10 +26,10 @@ const Dashboard: React.FC = () => {
 
   const fetchDashboardStats = async () => {
     try {
-      const response = await axios.get('/api/applicants/dashboard_stats/');
+      const response = await api.get("/applicants/dashboard_stats/");
       setStats(response.data);
     } catch (err: any) {
-      setError('Failed to load dashboard statistics');
+      setError("Failed to load dashboard statistics");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -38,71 +38,71 @@ const Dashboard: React.FC = () => {
 
   const statCards = [
     {
-      title: 'Total Applicants',
+      title: "Total Applicants",
       value: stats?.total_applicants || 0,
       icon: Users,
-      color: 'bg-blue-500',
-      textColor: 'text-blue-600 dark:text-blue-400',
+      color: "bg-blue-500",
+      textColor: "text-blue-600 dark:text-blue-400",
     },
     {
-      title: 'Total Jobs',
+      title: "Total Jobs",
       value: stats?.total_jobs || 0,
       icon: Briefcase,
-      color: 'bg-green-500',
-      textColor: 'text-green-600 dark:text-green-400',
+      color: "bg-green-500",
+      textColor: "text-green-600 dark:text-green-400",
     },
     {
-      title: 'New Applicants',
+      title: "New Applicants",
       value: stats?.new_applicants || 0,
       icon: FileText,
-      color: 'bg-purple-500',
-      textColor: 'text-purple-600 dark:text-purple-400',
+      color: "bg-purple-500",
+      textColor: "text-purple-600 dark:text-purple-400",
     },
     {
-      title: 'Shortlisted',
+      title: "Shortlisted",
       value: stats?.shortlisted_applicants || 0,
       icon: Award,
-      color: 'bg-yellow-500',
-      textColor: 'text-yellow-600 dark:text-yellow-400',
+      color: "bg-yellow-500",
+      textColor: "text-yellow-600 dark:text-yellow-400",
     },
     {
-      title: 'Reviewed',
+      title: "Reviewed",
       value: stats?.reviewed_applicants || 0,
       icon: CheckCircle,
-      color: 'bg-indigo-500',
-      textColor: 'text-indigo-600 dark:text-indigo-400',
+      color: "bg-indigo-500",
+      textColor: "text-indigo-600 dark:text-indigo-400",
     },
     {
-      title: 'Rejected',
+      title: "Rejected",
       value: stats?.rejected_applicants || 0,
       icon: XCircle,
-      color: 'bg-red-500',
-      textColor: 'text-red-600 dark:text-red-400',
+      color: "bg-red-500",
+      textColor: "text-red-600 dark:text-red-400",
     },
   ];
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
   };
 
   const exportCSV = async () => {
     try {
-      const response = await axios.get('/api/applicants/export_csv/', {
-        responseType: 'blob',
+      const response = await api.get("/applicants/export_csv/", {
+        responseType: "blob",
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.setAttribute('download', 'applicants.csv');
+      link.setAttribute("download", "applicants.csv");
       document.body.appendChild(link);
       link.click();
       link.remove();
     } catch (err) {
-      console.error('Failed to export CSV:', err);
+      console.error("Failed to export CSV:", err);
     }
   };
 
@@ -119,7 +119,9 @@ const Dashboard: React.FC = () => {
       <div className="rounded-md bg-red-50 dark:bg-red-900 p-4">
         <div className="flex">
           <div className="ml-3">
-            <h3 className="text-sm font-medium text-red-800 dark:text-red-200">{error}</h3>
+            <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
+              {error}
+            </h3>
           </div>
         </div>
       </div>
@@ -130,7 +132,9 @@ const Dashboard: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Dashboard</h1>
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+            Dashboard
+          </h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             Welcome to Nanthi Ventures Applicant Tracking System
           </p>
@@ -222,7 +226,10 @@ const Dashboard: React.FC = () => {
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {stats?.recent_applicants.map((applicant) => (
-                <tr key={applicant.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                <tr
+                  key={applicant.id}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10">
@@ -243,7 +250,9 @@ const Dashboard: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900 dark:text-white">{applicant.job_title}</div>
+                    <div className="text-sm text-gray-900 dark:text-white">
+                      {applicant.job_title}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <StatusBadge status={applicant.status} />
@@ -259,7 +268,9 @@ const Dashboard: React.FC = () => {
                       <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
                         <div
                           className="bg-green-600 h-2.5 rounded-full"
-                          style={{ width: `${Math.min(applicant.match_score, 100)}%` }}
+                          style={{
+                            width: `${Math.min(applicant.match_score, 100)}%`,
+                          }}
                         ></div>
                       </div>
                       <span className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -272,10 +283,13 @@ const Dashboard: React.FC = () => {
             </tbody>
           </table>
         </div>
-        {(!stats?.recent_applicants || stats.recent_applicants.length === 0) && (
+        {(!stats?.recent_applicants ||
+          stats.recent_applicants.length === 0) && (
           <div className="text-center py-12">
             <Users className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No recent applicants</h3>
+            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">
+              No recent applicants
+            </h3>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Get started by creating a job posting and receiving applications.
             </p>

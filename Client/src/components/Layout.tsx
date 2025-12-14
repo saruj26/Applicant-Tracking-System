@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
-import axios from "axios";
+import api from "../api/axios";
 import type { Applicant } from "../types";
 import {
   LayoutDashboard,
@@ -54,7 +54,7 @@ const Layout: React.FC = () => {
 
   const fetchNewApplicants = async () => {
     try {
-      const response = await axios.get("/api/applicants/");
+      const response = await api.get("/applicants/");
       const applicants = response.data.results || response.data;
       const newApplicants = applicants.filter(
         (app: Applicant) => app.status === "new"

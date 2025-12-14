@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import axios from "axios";
+import api from "../api/axios";
 import Swal from "sweetalert2";
 import {
   Search,
@@ -58,7 +58,7 @@ const Applicants: React.FC = () => {
       if (filters.minScore) params.append("min_score", filters.minScore);
       if (search) params.append("search", search);
 
-      const response = await axios.get(`/api/applicants/?${params}`);
+      const response = await api.get(`/applicants/?${params}`);
       setApplicants(response.data.results || response.data);
     } catch (err) {
       console.error("Failed to fetch applicants:", err);
@@ -69,7 +69,7 @@ const Applicants: React.FC = () => {
 
   const fetchJobs = async () => {
     try {
-      const response = await axios.get("/api/jobs/");
+      const response = await api.get("/jobs/");
       // Handle both paginated and direct array responses
       const jobsData = Array.isArray(response.data)
         ? response.data
@@ -122,7 +122,7 @@ const Applicants: React.FC = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.post(`/api/applicants/${applicantId}/update_status/`, {
+          await api.post(`/applicants/${applicantId}/update_status/`, {
             status,
           });
 
@@ -170,7 +170,7 @@ const Applicants: React.FC = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.post("/api/applicants/bulk_update_status/", {
+          await api.post("/applicants/bulk_update_status/", {
             applicant_ids: selectedApplicants,
             status,
           });
@@ -202,7 +202,7 @@ const Applicants: React.FC = () => {
 
   const exportCSV = async () => {
     try {
-      const response = await axios.get("/api/applicants/export_csv/", {
+      const response = await api.get("/applicants/export_csv/", {
         responseType: "blob",
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));

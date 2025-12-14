@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api/axios";
 import {
   Plus,
   Search,
@@ -62,7 +62,7 @@ const Jobs: React.FC = () => {
 
   const fetchJobs = async () => {
     try {
-      const response = await axios.get("/api/jobs/");
+      const response = await api.get("/jobs/");
       // Handle both paginated and direct array responses
       const jobsData = Array.isArray(response.data)
         ? response.data
@@ -127,7 +127,7 @@ const Jobs: React.FC = () => {
     }
 
     try {
-      const response = await axios.post("/api/jobs/", newJob);
+      const response = await api.post("/jobs/", newJob);
       setJobs([response.data, ...jobs]);
       setShowCreateModal(false);
       resetNewJobForm();
@@ -152,7 +152,7 @@ const Jobs: React.FC = () => {
     }
 
     try {
-      const response = await axios.put(`/api/jobs/${selectedJob.id}/`, newJob);
+      const response = await api.put(`/jobs/${selectedJob.id}/`, newJob);
       setJobs(
         jobs.map((job) => (job.id === selectedJob.id ? response.data : job))
       );
@@ -167,7 +167,7 @@ const Jobs: React.FC = () => {
     if (!selectedJob) return;
 
     try {
-      await axios.delete(`/api/jobs/${selectedJob.id}/`);
+      await api.delete(`/jobs/${selectedJob.id}/`);
       setJobs(jobs.filter((job) => job.id !== selectedJob.id));
       setShowDeleteModal(false);
       setSelectedJob(null);
@@ -179,7 +179,7 @@ const Jobs: React.FC = () => {
   const handleToggleJobStatus = async (job: Job) => {
     try {
       const updatedJob = { ...job, is_active: !job.is_active };
-      const response = await axios.put(`/api/jobs/${job.id}/`, updatedJob);
+      const response = await api.put(`/jobs/${job.id}/`, updatedJob);
       setJobs(jobs.map((j) => (j.id === job.id ? response.data : j)));
     } catch (err) {
       console.error("Failed to toggle job status:", err);
