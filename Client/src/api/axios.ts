@@ -2,9 +2,11 @@ import axios from "axios";
 
 // Determine API base URL based on environment
 const isDev = import.meta.env.DEV;
-const API_BASE_URL = isDev
-  ? import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api"
-  : import.meta.env.VITE_API_BASE_URL || "/api";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (isDev
+    ? "http://localhost:8000/api"
+    : "https://ats-production-server.up.railway.app/api");
 
 console.log(`[API] Environment: ${isDev ? "development" : "production"}`);
 console.log(`[API] Base URL: ${API_BASE_URL}`);
