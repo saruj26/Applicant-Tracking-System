@@ -8,9 +8,6 @@ const API_BASE_URL =
     ? "http://localhost:8000/api"
     : "https://ats-production-server.up.railway.app/api");
 
-console.log(`[API] Environment: ${isDev ? "development" : "production"}`);
-console.log(`[API] Base URL: ${API_BASE_URL}`);
-
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
