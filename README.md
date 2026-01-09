@@ -3,7 +3,7 @@
 A minimal yet powerful Applicant Tracking System (ATS) built as a take-home assignment to help recruiters efficiently manage, review, and shortlist job applications at scale.
 
 ## 🔗 Live Links
-- **Frontend**: [https://applicant-tracking-system-nanthi.vercel.app/](https://applicant-tracking-system-nanthi.vercel.app/)
+- **Frontend**: [https://applicant-tracking-system-codevanta.vercel.app/](https://applicant-tracking-system-codevanta.vercel.app/)
 - **Backend API**: [https://ats-production-server.up.railway.app](https://ats-production-server.up.railway.app)
 
 ## 🚀 Project Overview
