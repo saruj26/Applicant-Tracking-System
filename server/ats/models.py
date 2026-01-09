@@ -12,7 +12,7 @@ STATUS_CHOICES = [
 
 class Recruiter(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    company_name = models.CharField(max_length=200, default="Nanthi Ventures")
+    company_name = models.CharField(max_length=200, default="CodeVanta")
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):

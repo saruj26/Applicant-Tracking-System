@@ -300,35 +300,34 @@ const JobDetail: React.FC = () => {
                 </div>
               </div>
 
-            
-                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                    Ready to Apply?
-                  </h3>
-                  <ul className="space-y-3 mb-6">
-                    <li className="flex items-center text-gray-600 dark:text-gray-400">
-                      <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                      <span>Fill out the application form</span>
-                    </li>
-                    <li className="flex items-center text-gray-600 dark:text-gray-400">
-                      <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                      <span>Upload your resume</span>
-                    </li>
-                    <li className="flex items-center text-gray-600 dark:text-gray-400">
-                      <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                      <span>Add optional cover letter</span>
-                    </li>
-                    <li className="flex items-center text-gray-600 dark:text-gray-400">
-                      <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                      <span>Submit & wait for response</span>
-                    </li>
-                  </ul>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    <Clock className="h-4 w-4 inline mr-1" />
-                    Average response time: 3-5 business days
-                  </div>
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Ready to Apply?
+                </h3>
+                <ul className="space-y-3 mb-6">
+                  <li className="flex items-center text-gray-600 dark:text-gray-400">
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
+                    <span>Fill out the application form</span>
+                  </li>
+                  <li className="flex items-center text-gray-600 dark:text-gray-400">
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
+                    <span>Upload your resume</span>
+                  </li>
+                  <li className="flex items-center text-gray-600 dark:text-gray-400">
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
+                    <span>Add optional cover letter</span>
+                  </li>
+                  <li className="flex items-center text-gray-600 dark:text-gray-400">
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
+                    <span>Submit & wait for response</span>
+                  </li>
+                </ul>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  <Clock className="h-4 w-4 inline mr-1" />
+                  Average response time: 3-5 business days
                 </div>
-              
+              </div>
+
               {/* Requirements */}
               {job.requirements && (
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
@@ -346,7 +345,7 @@ const JobDetail: React.FC = () => {
               {/* Benefits */}
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                  Why Join Nanthi Ventures?
+                  Why Join CodeVanta?
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">

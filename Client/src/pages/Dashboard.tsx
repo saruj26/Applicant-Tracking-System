@@ -136,7 +136,7 @@ const Dashboard: React.FC = () => {
             Dashboard
           </h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Welcome to Nanthi Ventures Applicant Tracking System
+            Welcome to CodeVanta Applicant Tracking System
           </p>
         </div>
         <div className="flex space-x-3">

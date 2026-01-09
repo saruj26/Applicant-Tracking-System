@@ -1,25 +1,28 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { LogIn, Briefcase } from 'lucide-react';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { LogIn, Briefcase } from "lucide-react";
 
 const Login: React.FC = () => {
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
-  const [error, setError] = useState('');
+  const [credentials, setCredentials] = useState({
+    username: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
 
     try {
       await login(credentials);
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (err: any) {
-      setError(err.message || 'Login failed');
+      setError(err.message || "Login failed");
     } finally {
       setIsLoading(false);
     }
@@ -33,7 +36,7 @@ const Login: React.FC = () => {
             <Briefcase className="h-12 w-12 text-blue-600 dark:text-blue-400" />
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-            Nanthi Ventures ATS
+            CodeVanta ATS
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
             Applicant Tracking System for Recruiters
@@ -42,7 +45,10 @@ const Login: React.FC = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Username or Email
               </label>
               <input
@@ -51,13 +57,18 @@ const Login: React.FC = () => {
                 type="text"
                 required
                 value={credentials.username}
-                onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+                onChange={(e) =>
+                  setCredentials({ ...credentials, username: e.target.value })
+                }
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Enter your username or email"
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Password
               </label>
               <input
@@ -66,7 +77,9 @@ const Login: React.FC = () => {
                 type="password"
                 required
                 value={credentials.password}
-                onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                onChange={(e) =>
+                  setCredentials({ ...credentials, password: e.target.value })
+                }
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Enter your password"
               />
@@ -77,7 +90,9 @@ const Login: React.FC = () => {
             <div className="rounded-md bg-red-50 dark:bg-red-900 p-4">
               <div className="flex">
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800 dark:text-red-200">{error}</h3>
+                  <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
+                    {error}
+                  </h3>
                 </div>
               </div>
             </div>
@@ -92,7 +107,7 @@ const Login: React.FC = () => {
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                 <LogIn className="h-5 w-5 text-blue-500 group-hover:text-blue-400" />
               </span>
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? "Signing in..." : "Sign in"}
             </button>
           </div>
 

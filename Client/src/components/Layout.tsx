@@ -103,7 +103,7 @@ const Layout: React.FC = () => {
               <div className="flex items-center">
                 <Briefcase className="h-8 w-8 text-blue-600 dark:text-blue-400" />
                 <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">
-                  Nanthi Ventures
+                  CodeVanta
                 </span>
               </div>
               <button
@@ -176,7 +176,7 @@ const Layout: React.FC = () => {
               </div>
               <div className="ml-3">
                 <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                  Nanthi Ventures
+                  CodeVanta
                 </h1>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
                   Recruiter Portal
@@ -257,7 +257,7 @@ const Layout: React.FC = () => {
             <div className="ml-4 flex items-center">
               <Briefcase className="h-6 w-6 text-blue-600 dark:text-blue-400" />
               <span className="ml-2 text-lg font-semibold text-gray-900 dark:text-white">
-                Nanthi Ventures
+                CodeVanta
               </span>
             </div>
           </div>
@@ -455,7 +455,7 @@ const Layout: React.FC = () => {
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                © {new Date().getFullYear()} Nanthi Ventures ATS. Version 1.0.0
+                © {new Date().getFullYear()} CodeVanta ATS. Version 1.0.0
               </p>
               <div className="flex space-x-6 mt-2 md:mt-0">
                 <Link

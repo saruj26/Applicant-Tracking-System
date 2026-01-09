@@ -68,7 +68,7 @@ const Home: React.FC = () => {
       name: "Sarah Johnson",
       role: "HR Director, TechCorp",
       content:
-        "Nanthi ATS reduced our hiring time by 60%. The platform is intuitive and powerful.",
+        "CodeVanta ATS reduced our hiring time by 60%. The platform is intuitive and powerful.",
       avatar: "SJ",
     },
     {
@@ -162,10 +162,10 @@ const Home: React.FC = () => {
                           Email
                         </h4>
                         <a
-                          href="mailto:careers@nanthi.com"
+                          href="mailto:careers@codevanta.com"
                           className="text-blue-600 hover:text-blue-800 transition-colors text-lg"
                         >
-                          careers@nanthi.com
+                          careers@codevanta.com
                         </a>
                       </div>
                     </div>
@@ -253,7 +253,7 @@ const Home: React.FC = () => {
               Ready to Transform Your Hiring?
             </h2>
             <p className="text-xl text-blue-100 mb-8">
-              Join hundreds of companies already using Nanthi ATS to build
+              Join hundreds of companies already using CodeVanta ATS to build
               amazing teams.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

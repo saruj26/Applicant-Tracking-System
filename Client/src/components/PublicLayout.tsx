@@ -14,7 +14,7 @@ import {
   Linkedin,
   Twitter,
   Facebook,
-  Instagram
+  Instagram,
 } from "lucide-react";
 
 interface PublicLayoutProps {
@@ -44,7 +44,7 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
               </div>
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  Nanthi Ventures
+                  CodeVanta
                 </h1>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
                   Talent Acquisition
@@ -148,7 +148,7 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                   <Briefcase className="h-7 w-7 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold">Nanthi Ventures</h2>
+                  <h2 className="text-2xl font-bold">CodeVanta</h2>
                   <p className="text-gray-400">
                     Innovating the future of talent acquisition
                   </p>
@@ -253,7 +253,7 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                 <div className="flex items-center">
                   <Mail className="h-5 w-5 text-blue-400 mr-3 flex-shrink-0" />
                   <span className="text-gray-400">
-                    careers@nanthiventures.com
+                    careers@codevanta.com
                   </span>
                 </div>
               </div>
@@ -264,8 +264,7 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
           <div className="border-t border-gray-800 mt-8 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <p className="text-gray-500 text-sm">
-                © {new Date().getFullYear()} Nanthi Ventures. All rights
-                reserved.
+                © {new Date().getFullYear()} CodeVanta. All rights reserved.
               </p>
               <div className="flex space-x-6 mt-4 md:mt-0">
                 <Link

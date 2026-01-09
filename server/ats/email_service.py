@@ -23,7 +23,7 @@ def send_application_confirmation_email(applicant_data, job_title, applicant_ema
         context = {
             'applicant_name': applicant_data.get('name', 'Applicant'),
             'job_title': job_title,
-            'company_name': 'Nanthi Ventures',
+            'company_name': 'CodeVanta',
         }
         
         # HTML email body
@@ -32,7 +32,7 @@ def send_application_confirmation_email(applicant_data, job_title, applicant_ema
             <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
                 <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
                     <div style="border-bottom: 3px solid #3b82f6; padding-bottom: 20px; margin-bottom: 30px;">
-                        <h1 style="color: #3b82f6; margin: 0;">Nanthi Ventures</h1>
+                        <h1 style="color: #3b82f6; margin: 0;">CodeVanta</h1>
                         <p style="color: #666; margin: 5px 0 0 0;">Talent Acquisition System</p>
                     </div>
                     
@@ -52,10 +52,10 @@ def send_application_confirmation_email(applicant_data, job_title, applicant_ema
                         </ul>
                     </div>
                     
-                    <p>If you have any questions about your application, feel free to reach out to us at <strong>careers@nanthi.com</strong>.</p>
+                    <p>If you have any questions about your application, feel free to reach out to us at <strong>careers@codevanta.com</strong>.</p>
                     
                     <p>Best regards,<br/>
-                    <strong>Nanthi Ventures Recruitment Team</strong></p>
+                    <strong>CodeVanta Recruitment Team</strong></p>
                     
                     <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
                     
@@ -77,10 +77,10 @@ We have successfully received your application for the {context['job_title']} po
 
 Our recruitment team will review your application and assess your qualifications. If there's a match, we will contact you for an interview. You can expect to hear back from us within 1-2 weeks.
 
-If you have any questions, please contact us at careers@nanthi.com.
+If you have any questions, please contact us at careers@codevanta.com.
 
 Best regards,
-Nanthi Ventures Recruitment Team
+CodeVanta Recruitment Team
         """
         
         send_mail(
@@ -147,7 +147,7 @@ def send_status_update_email(applicant_name, applicant_email, job_title, new_sta
             <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
                 <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
                     <div style="border-bottom: 3px solid #3b82f6; padding-bottom: 20px; margin-bottom: 30px;">
-                        <h1 style="color: #3b82f6; margin: 0;">Nanthi Ventures</h1>
+                        <h1 style="color: #3b82f6; margin: 0;">CodeVanta</h1>
                         <p style="color: #666; margin: 5px 0 0 0;">Talent Acquisition System</p>
                     </div>
                     
@@ -164,10 +164,10 @@ def send_status_update_email(applicant_name, applicant_email, job_title, new_sta
                     
                     {f'<div style="background-color: #f3f4f6; padding: 15px; margin: 20px 0; border-radius: 4px;"><strong>Recruiter Notes:</strong><p>{notes}</p></div>' if notes else ''}
                     
-                    <p>If you have any questions or need further information, please don't hesitate to reach out to us at <strong>careers@nanthi.com</strong>.</p>
+                    <p>If you have any questions or need further information, please don't hesitate to reach out to us at <strong>careers@codevanta.com</strong>.</p>
                     
                     <p>Best regards,<br/>
-                    <strong>Nanthi Ventures Recruitment Team</strong></p>
+                    <strong>CodeVanta Recruitment Team</strong></p>
                     
                     <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
                     
@@ -190,10 +190,10 @@ Status: {new_status.upper()}
 
 {f'Recruiter Notes:{notes}' if notes else ''}
 
-If you have any questions, please contact us at careers@nanthi.com.
+If you have any questions, please contact us at careers@codevanta.com.
 
 Best regards,
-Nanthi Ventures Recruitment Team
+CodeVanta Recruitment Team
         """
         
         send_mail(

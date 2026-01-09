@@ -106,7 +106,7 @@ const Careers: React.FC = () => {
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Join Our Team at Nanthi Ventures
+              Join Our Team at CodeVanta
             </h1>
             <p className="text-xl text-blue-100 mb-8">
               We're building the future. Come help us create something amazing.
@@ -241,8 +241,10 @@ const Careers: React.FC = () => {
                       )}
                       {job.salary_range && (
                         <div className="flex items-center">
-                         
-                          LKR <span className="font-mono ml-1">{job.salary_range}</span>
+                          LKR{" "}
+                          <span className="font-mono ml-1">
+                            {job.salary_range}
+                          </span>
                         </div>
                       )}
                       <div className="flex items-center">
@@ -337,12 +339,12 @@ const Careers: React.FC = () => {
       <footer className="bg-gray-900 text-white py-12">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <h3 className="text-2xl font-bold mb-4">Nanthi Ventures</h3>
+            <h3 className="text-2xl font-bold mb-4">CodeVanta</h3>
             <p className="text-gray-400 mb-6">
               Building innovative solutions for the future
             </p>
             <p className="text-gray-500">
-              © {new Date().getFullYear()} Nanthi Ventures. All rights reserved.
+              © {new Date().getFullYear()} CodeVanta. All rights reserved.
             </p>
           </div>
         </div>
